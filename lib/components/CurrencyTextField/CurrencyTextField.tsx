@@ -8,7 +8,7 @@ import TextField, { TextFieldProps } from '@mui/material/TextField';
  * Extends Material UI's TextFieldProps, excluding 'onChange' and 'defaultValue'.
  */
 interface CurrencyTextFieldProps
-  extends Omit<TextFieldProps, 'onChange' | 'defaultValue'> {
+  extends Omit<TextFieldProps, 'onBlur' | 'onChange' | 'defaultValue'> {
   /**
    * The character used as the decimal separator.
    * Defaults to '.'.
@@ -31,13 +31,13 @@ interface CurrencyTextFieldProps
    * The minimum allowable value as a string.
    * Defaults to '-10000000000000'.
    */
-  minimumValue?: string;
+  minimumValue?: string | number;
 
   /**
    * The maximum allowable value as a string.
    * Defaults to '10000000000000'.
    */
-  maximumValue?: string;
+  maximumValue?: string | number;
 
   /**
    * The format of the output value.
@@ -62,6 +62,15 @@ interface CurrencyTextFieldProps
    * Receives the new value and formatted value as arguments.
    */
   onChange?: (value: number | string, formattedValue: string) => void;
+
+  /**
+   * Callback function that is called when the input loses focus.
+   * Receives the event and value as arguments.
+   */
+  onBlur?: (
+    event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
+    value: string | number,
+  ) => void;
 }
 
 /**
@@ -79,6 +88,7 @@ const CurrencyTextField: React.FC<CurrencyTextFieldProps> = ({
   outputFormat = 'number',
   value = '',
   defaultValue,
+  onBlur,
   onChange,
   ...props
 }) => {
@@ -91,17 +101,28 @@ const CurrencyTextField: React.FC<CurrencyTextFieldProps> = ({
    * @param {NumberFormatValues} values - The values from the NumberFormat component.
    */
   const handleValueChange = (values: NumberFormatValues) => {
-    const { floatValue, formattedValue } = values;
-
     if (onChange) {
       if (outputFormat === 'number') {
-        onChange(floatValue || 0, formattedValue);
+        onChange(values.floatValue || 0, values.formattedValue);
       } else {
-        onChange(values.value, formattedValue);
+        onChange(values.value, values.formattedValue);
       }
     }
 
     setInternalValue(values.value);
+  };
+
+  /**
+   * Handle the blur event for the input field.
+   *
+   * @param {React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>} event - The blur event.
+   */
+  const handleBlur = (
+    event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    if (onBlur) {
+      onBlur(event, internalValue);
+    }
   };
 
   return (
@@ -116,6 +137,7 @@ const CurrencyTextField: React.FC<CurrencyTextFieldProps> = ({
       customInput={TextField}
       min={minimumValue}
       max={maximumValue}
+      onBlur={handleBlur}
       onValueChange={handleValueChange}
       {...props}
       type={'text'}
