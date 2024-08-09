@@ -1,20 +1,12 @@
 import * as React from 'react';
 import Dinero from 'dinero.js';
 import CurrencyTextField from '../lib/components/CurrencyTextField';
+import { Typography } from '@mui/material';
 
 export const App: React.FC = () => {
-  const [brutto, setBrutto] = React.useState(1337.42);
-
-  function euro(amount: string): Dinero.Dinero {
-    const [euro, cents] = amount.split('.');
-    return Dinero({
-      amount:
-        (parseInt(euro, 10) || 0) * 100 +
-        (parseInt(cents?.padEnd(2, '0'), 10) || 0),
-      currency: 'EUR',
-      precision: 2,
-    });
-  }
+  const [brutto, setBrutto] = React.useState<Dinero.Dinero>(
+    Dinero({ amount: 133742, currency: 'EUR', precision: 2 }),
+  );
 
   return (
     <div>
@@ -24,16 +16,16 @@ export const App: React.FC = () => {
         value={brutto}
         variant={'outlined'}
         currencySymbol="€"
+        currency="EUR"
+        precision={2}
         minimumValue={0}
-        outputFormat="string"
         decimalCharacter=","
         digitGroupSeparator="."
-        onBlur={(_event, value) => {
-          const brutto = euro(value.toString());
-          setBrutto(brutto.getAmount());
+        onChange={(value) => {
+          setBrutto(value);
         }}
-        helperText={`Dinero amount: ${brutto}`}
       />
+      <Typography>Dinero amount: {brutto.getAmount()}</Typography>
     </div>
   );
 };

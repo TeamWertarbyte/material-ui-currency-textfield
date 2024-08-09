@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { NumericFormat, NumberFormatValues } from 'react-number-format';
-import TextField, { TextFieldProps } from '@mui/material/TextField';
+import React, { useEffect, useMemo, useState } from 'react';
+import Dinero from 'dinero.js';
+import { NumericFormat, type NumberFormatValues } from 'react-number-format';
+import TextField, { type TextFieldProps } from '@mui/material/TextField';
 
 /**
  * Props for the CurrencyTextField component.
@@ -22,6 +23,14 @@ interface CurrencyTextFieldProps
   digitGroupSeparator?: string;
 
   /**
+   * ISO 4217 CURRENCY CODES as specified in the documentation
+   * Taken from https:// www. iso. org/ iso-4217-currency-codes.html
+   * Sorted and parsed
+   * Defaults to 'USD'.
+   */
+  currency?: Dinero.Currency;
+
+  /**
    * The symbol used as the currency prefix.
    * Defaults to '$'.
    */
@@ -40,28 +49,27 @@ interface CurrencyTextFieldProps
   maximumValue?: string | number;
 
   /**
-   * The format of the output value.
-   * Can be 'number' or 'string'. Defaults to 'number'.
+   * The number of decimal places to display.
+   * Defaults to 2.
    */
-  outputFormat?: 'number' | 'string';
+  precision?: number;
 
   /**
    * The current value of the text field.
    * Can be a number or a string.
    */
-  value?: number | string;
+  value?: Dinero.Dinero;
 
   /**
    * The default value of the text field.
-   * Can be a number or a string.
    */
-  defaultValue?: number | string;
+  defaultValue?: Dinero.Dinero;
 
   /**
    * Callback function that is called when the value changes.
    * Receives the new value and formatted value as arguments.
    */
-  onChange?: (value: number | string, formattedValue: string) => void;
+  onChange?: (value: Dinero.Dinero, formattedValue: string) => void;
 
   /**
    * Callback function that is called when the input loses focus.
@@ -69,7 +77,7 @@ interface CurrencyTextFieldProps
    */
   onBlur?: (
     event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
-    value: string | number,
+    value: Dinero.Dinero,
   ) => void;
 }
 
@@ -80,20 +88,39 @@ interface CurrencyTextFieldProps
  * It handles value formatting using the NumericFormat component from react-number-format.
  */
 const CurrencyTextField: React.FC<CurrencyTextFieldProps> = ({
-  decimalCharacter = '.',
-  digitGroupSeparator = ',',
+  decimalCharacter = ',',
+  digitGroupSeparator = '.',
+  currency = 'USD',
   currencySymbol = '$',
   minimumValue = '-10000000000000',
   maximumValue = '10000000000000',
-  outputFormat = 'number',
-  value = '',
+  precision = 2,
+  value,
   defaultValue,
   onBlur,
   onChange,
   ...props
 }) => {
   // Internal state to manage the input value.
-  const [internalValue, setInternalValue] = useState(value);
+  const [internalValue, setInternalValue] = useState<Dinero.Dinero>(
+    (value || defaultValue) ??
+      Dinero({
+        amount: 0,
+        currency: currency,
+        precision: precision,
+      }),
+  );
+
+  /**
+   * TODO: fix loop when precision changes
+   */
+  useEffect(() => {
+    setInternalValue((prevState) => ({
+      ...prevState,
+      currency: currency,
+      precision: precision,
+    }));
+  }, [currency, precision]);
 
   /**
    * Handle changes to the input value.
@@ -101,15 +128,20 @@ const CurrencyTextField: React.FC<CurrencyTextFieldProps> = ({
    * @param {NumberFormatValues} values - The values from the NumberFormat component.
    */
   const handleValueChange = (values: NumberFormatValues) => {
-    if (onChange) {
-      if (outputFormat === 'number') {
-        onChange(values.floatValue || 0, values.formattedValue);
-      } else {
-        onChange(values.value, values.formattedValue);
-      }
-    }
+    const [euro, cents] = values.value.split('.');
 
-    setInternalValue(values.value);
+    const dineroValue = Dinero({
+      amount: values.value
+        ? (parseInt(euro, 10) || 0) * 100 +
+          (parseInt(cents?.padEnd(2, '0'), 10) || 0)
+        : 0,
+      currency: currency,
+      precision: precision,
+    });
+
+    onChange?.(dineroValue, values.formattedValue);
+
+    setInternalValue(dineroValue);
   };
 
   /**
@@ -125,14 +157,36 @@ const CurrencyTextField: React.FC<CurrencyTextFieldProps> = ({
     }
   };
 
+  /**
+   * Formats the dinero value to a matching number that can be use in NumericFormat
+   */
+  const formattedValue = useMemo(() => {
+    const amount = internalValue?.getAmount() ?? 0;
+    const precision = internalValue?.getPrecision() ?? 2;
+    const factor = Math.pow(10, precision);
+    return (amount / factor).toFixed(precision);
+  }, [internalValue]);
+
+  /**
+   * Formats the dinero value to a matching number that can be use in NumericFormat
+   */
+  const formattedDefaultValue = useMemo(() => {
+    const amount = defaultValue?.getAmount() ?? 0;
+    const precision = defaultValue?.getPrecision() ?? 2;
+    const factor = Math.pow(10, precision);
+    return (amount / factor).toFixed(precision);
+  }, [defaultValue]);
+
   return (
     <NumericFormat
-      value={internalValue}
-      defaultValue={defaultValue}
+      value={formattedValue}
+      defaultValue={formattedDefaultValue}
       displayType="input"
+      fixedDecimalScale
+      decimalScale={precision}
       decimalSeparator={decimalCharacter}
       thousandSeparator={digitGroupSeparator}
-      valueIsNumericString={outputFormat === 'string'}
+      valueIsNumericString
       prefix={currencySymbol}
       customInput={TextField}
       min={minimumValue}
