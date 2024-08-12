@@ -1,6 +1,6 @@
 {
   "name": "@wertarbyte/material-ui-currency-textfield",
-  "description": "React hook and components for UpdateHive",
+  "description": "Currency textField for React Material UI",
   "author": "Wertarbyte <kontakt@wertarbyte.com> (https://wertarbyte.com)",
   "license": "MIT",
   "bugs": {
@@ -13,16 +13,16 @@
   },
   "version": "1.0.0",
   "type": "module",
-  "main": "dist/updatehive-react.umd.js",
-  "module": "dist/updatehive-react.js",
-  "types": "dist/updatehive-react.d.ts",
+  "main": "dist/material-ui-currency-textfield.umd.js",
+  "module": "dist/material-ui-currency-textfield.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "exports": {
     ".": {
-      "import": "./dist/updatehive-react.js",
-      "require": "./dist/updatehive-react.umd.js"
+      "import": "./dist/material-ui-currency-textfield.js",
+      "require": "./dist/material-ui-currency-textfield.umd.js"
     }
   },
   "scripts": {
