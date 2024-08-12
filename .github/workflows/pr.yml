@@ -20,11 +20,11 @@ jobs:
         with:
           node-version: '20'
       - name: Install dependencies
-        run: npm ci
+        run: yarn install --frozen-lockfile
       - name: Lint code
-        run: npm run lint
+        run: yarn lint
       - name: Build library code
-        run: npm run build
+        run: yarn build
   check-versioning:
     runs-on: ubuntu-latest
     steps:
