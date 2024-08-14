@@ -7,6 +7,8 @@
 [react]: https://react.dev/
 [mui]: https://mui.com/material-ui/
 
+![Example of currency field](currency_field_example.gif)
+
 ## Usage
 
 ```jsx
