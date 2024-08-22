@@ -9,12 +9,22 @@
 
 ![Example of currency field](currency_field_example.gif)
 
+## Installation
+
+```sh
+# npm
+npm install @wertarbyte/material-ui-currency-textfield
+
+# yarn
+yarn add @wertarbyte/material-ui-currency-textfield
+```
+
 ## Usage
 
 ```jsx
 import * as React from 'react';
 import Dinero from 'dinero.js';
-import CurrencyTextField from '../lib/components/CurrencyTextField';
+import { CurrencyTextField } from '@wertarbyte/material-ui-currency-textfield';
 
 export const MyComponent: React.FC = () => {
 
@@ -59,16 +69,6 @@ export const MyComponent: React.FC = () => {
 |onBlur|`func`||Callback function that is called when the input loses focus. Receives the event and value as arguments.|
 
 [iso]: https://www.iso.org/iso-4217-currency-codes.html
-
-## Installation
-
-```sh
-# npm
-npm install @wertarbyte/material-ui-currency-textfield
-
-# yarn
-yarn add @wertarbyte/material-ui-currency-textfield
-```
 
 ## Development
 
