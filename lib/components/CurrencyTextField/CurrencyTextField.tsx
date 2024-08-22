@@ -87,7 +87,7 @@ interface CurrencyTextFieldProps
  * This component provides a text field for currency input, supporting custom formatting options.
  * It handles value formatting using the NumericFormat component from react-number-format.
  */
-const CurrencyTextField: React.FC<CurrencyTextFieldProps> = ({
+export const CurrencyTextField: React.FC<CurrencyTextFieldProps> = ({
   decimalCharacter = ',',
   digitGroupSeparator = '.',
   currency = 'USD',
@@ -198,5 +198,3 @@ const CurrencyTextField: React.FC<CurrencyTextFieldProps> = ({
     />
   );
 };
-
-export default CurrencyTextField;

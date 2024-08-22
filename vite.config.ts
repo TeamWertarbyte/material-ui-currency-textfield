@@ -12,7 +12,7 @@ export default defineConfig({
   build: {
     copyPublicDir: false,
     lib: {
-      entry: resolve(__dirname, 'lib/index.ts'),
+      entry: resolve(__dirname, 'lib/material-ui-currency-textfield.ts'),
       name: 'material-ui-currency-textfield',
     },
     rollupOptions: {

@@ -15,7 +15,7 @@
   "type": "module",
   "main": "dist/material-ui-currency-textfield.umd.js",
   "module": "dist/material-ui-currency-textfield.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/material-ui-currency-textfield.d.ts",
   "files": [
     "dist"
   ],

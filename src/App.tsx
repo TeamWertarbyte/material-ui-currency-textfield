@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Dinero from 'dinero.js';
-import CurrencyTextField from '../lib/components/CurrencyTextField';
+import { CurrencyTextField } from '../dist/material-ui-currency-textfield';
 import { Typography } from '@mui/material';
 
 export const App: React.FC = () => {
