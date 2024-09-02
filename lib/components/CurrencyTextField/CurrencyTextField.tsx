@@ -195,7 +195,7 @@ export const CurrencyTextField: React.FC<CurrencyTextFieldProps> = ({
       decimalSeparator={decimalCharacter}
       thousandSeparator={digitGroupSeparator}
       valueIsNumericString
-      prefix={currencySymbol}
+      prefix={`${currencySymbol} `}
       customInput={TextField}
       min={minimumValue}
       max={maximumValue}
