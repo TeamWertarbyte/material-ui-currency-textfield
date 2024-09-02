@@ -158,6 +158,14 @@ export const CurrencyTextField: React.FC<CurrencyTextFieldProps> = ({
   };
 
   /**
+   * Selects the input value when the input is focused.
+   * @param event - The focus event.
+   */
+  const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
+    event.target.select();
+  };
+
+  /**
    * Formats the dinero value to a matching number that can be use in NumericFormat
    */
   const formattedValue = useMemo(() => {
@@ -192,6 +200,7 @@ export const CurrencyTextField: React.FC<CurrencyTextFieldProps> = ({
       min={minimumValue}
       max={maximumValue}
       onBlur={handleBlur}
+      onFocus={handleFocus}
       onValueChange={handleValueChange}
       {...props}
       type={'text'}
