@@ -123,6 +123,16 @@ export const CurrencyTextField: React.FC<CurrencyTextFieldProps> = ({
   }, [currency, precision]);
 
   /**
+   * Update the internal value when the value prop changes.
+   * This is necessary to keep the input value in sync with the value prop.
+   */
+  useEffect(() => {
+    if (value) {
+      setInternalValue(value);
+    }
+  }, [value]);
+
+  /**
    * Handle changes to the input value.
    *
    * @param {NumberFormatValues} values - The values from the NumberFormat component.
