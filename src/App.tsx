@@ -5,7 +5,7 @@ import { Box, Button, Typography } from '@mui/material';
 
 export const App: React.FC = () => {
   const [brutto, setBrutto] = React.useState<Dinero.Dinero>(
-    Dinero({ amount: 133742, currency: 'EUR', precision: 2 }),
+    Dinero({ amount: 5000, currency: 'EUR', precision: 2 }),
   );
 
   return (
@@ -37,6 +37,15 @@ export const App: React.FC = () => {
         }}
       >
         50 € hinzufügen
+      </Button>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => {
+          setBrutto(() => Dinero({ amount: 5000, currency: 'EUR' }));
+        }}
+      >
+        Auf 50 € setzen
       </Button>
       <Typography>Dinero amount: {brutto.getAmount()}</Typography>
     </Box>

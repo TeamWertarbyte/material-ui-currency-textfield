@@ -149,9 +149,11 @@ export const CurrencyTextField: React.FC<CurrencyTextFieldProps> = ({
       precision: precision,
     });
 
-    onChange?.(dineroValue, values.formattedValue);
+    if (!dineroValue.equalsTo(internalValue)) {
+      onChange?.(dineroValue, values.formattedValue);
 
-    setInternalValue(dineroValue);
+      setInternalValue(dineroValue);
+    }
   };
 
   /**
