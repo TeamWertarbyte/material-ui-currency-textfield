@@ -42,7 +42,6 @@ export const App: React.FC = () => {
         InputLabelProps={{
           shrink: true,
         }}
-        defaultValue={Dinero({ amount: 0, currency: 'EUR', precision: 2 })}
         decimalCharacter=","
         digitGroupSeparator="."
         placeholder="0.00"
