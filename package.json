@@ -44,8 +44,8 @@
   "devDependencies": {
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
-    "@mui/material": "^5.16.4",
-    "@mui/styles": "^5.16.4",
+    "@mui/material": "^5.16.7",
+    "@mui/styles": "^5.16.7",
     "@types/dinero.js": "^1.9.4",
     "@types/node": "^20.14.6",
     "@types/react": "^18.2.66",
@@ -57,11 +57,11 @@
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
-    "prettier": "^3.3.2",
+    "prettier": "3.3.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "typescript": "^5.2.2",
-    "vite": "^5.2.0",
+    "vite": "^5.4.10",
     "vite-plugin-dts": "^4.0.1"
   },
   "dependencies": {

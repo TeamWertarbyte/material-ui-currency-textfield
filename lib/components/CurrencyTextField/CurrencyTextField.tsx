@@ -9,7 +9,10 @@ import TextField, { type TextFieldProps } from '@mui/material/TextField';
  * Extends Material UI's TextFieldProps, excluding 'onChange' and 'defaultValue'.
  */
 interface CurrencyTextFieldProps
-  extends Omit<TextFieldProps, 'onBlur' | 'onChange' | 'defaultValue'> {
+  extends Omit<
+    TextFieldProps,
+    'onBlur' | 'onChange' | 'defaultValue' | 'type'
+  > {
   /**
    * The character used as the decimal separator.
    * Defaults to '.'.
@@ -102,32 +105,28 @@ export const CurrencyTextField: React.FC<CurrencyTextFieldProps> = ({
   ...props
 }) => {
   // Internal state to manage the input value.
-  const [internalValue, setInternalValue] = useState<Dinero.Dinero>(
-    (value || defaultValue) ??
-      Dinero({
-        amount: 0,
-        currency: currency,
-        precision: precision,
-      }),
+  const [internalValue, setInternalValue] = useState<Dinero.Dinero | undefined>(
+    value ?? defaultValue ?? undefined,
   );
 
-  /**
-   * TODO: fix loop when precision changes
-   */
   useEffect(() => {
-    setInternalValue((prevState) => ({
-      ...prevState,
-      currency: currency,
-      precision: precision,
-    }));
-  }, [currency, precision]);
+    if (internalValue) {
+      const updatedValue = Dinero({
+        amount: internalValue.getAmount(),
+        currency,
+        precision,
+      });
 
-  /**
-   * Update the internal value when the value prop changes.
-   * This is necessary to keep the input value in sync with the value prop.
-   */
+      // Update only if there's a real change to avoid unnecessary re-renders
+      if (!updatedValue.equalsTo(internalValue)) {
+        setInternalValue(updatedValue);
+      }
+    }
+  }, [currency, internalValue, precision]);
+
+  // Update internal value only if `value` prop changes and is defined
   useEffect(() => {
-    if (value) {
+    if (value !== undefined) {
       setInternalValue(value);
     }
   }, [value]);
@@ -149,9 +148,8 @@ export const CurrencyTextField: React.FC<CurrencyTextFieldProps> = ({
       precision: precision,
     });
 
-    if (!dineroValue.equalsTo(internalValue)) {
+    if (!internalValue || !dineroValue.equalsTo(internalValue)) {
       onChange?.(dineroValue, values.formattedValue);
-
       setInternalValue(dineroValue);
     }
   };
@@ -165,7 +163,7 @@ export const CurrencyTextField: React.FC<CurrencyTextFieldProps> = ({
     event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     if (onBlur) {
-      onBlur(event, internalValue);
+      onBlur(event, internalValue as Dinero.Dinero);
     }
   };
 
@@ -181,18 +179,20 @@ export const CurrencyTextField: React.FC<CurrencyTextFieldProps> = ({
    * Formats the dinero value to a matching number that can be use in NumericFormat
    */
   const formattedValue = useMemo(() => {
-    const amount = internalValue?.getAmount() ?? 0;
-    const precision = internalValue?.getPrecision() ?? 2;
-    const factor = Math.pow(10, precision);
+    if (!internalValue) return ''; // Return empty string if no value
+    const amount = internalValue.getAmount();
+    const factor = Math.pow(10, internalValue.getPrecision());
     return (amount / factor).toFixed(precision);
-  }, [internalValue]);
+  }, [internalValue, precision]);
 
   /**
    * Formats the dinero value to a matching number that can be use in NumericFormat
    */
   const formattedDefaultValue = useMemo(() => {
-    const amount = defaultValue?.getAmount() ?? 0;
-    const precision = defaultValue?.getPrecision() ?? 2;
+    if (!defaultValue) return '';
+
+    const amount = defaultValue.getAmount() ?? 0;
+    const precision = defaultValue.getPrecision() ?? 2;
     const factor = Math.pow(10, precision);
     return (amount / factor).toFixed(precision);
   }, [defaultValue]);
@@ -215,7 +215,7 @@ export const CurrencyTextField: React.FC<CurrencyTextFieldProps> = ({
       onFocus={handleFocus}
       onValueChange={handleValueChange}
       {...props}
-      type={'text'}
+      type="text"
     />
   );
 };
