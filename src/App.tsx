@@ -7,6 +7,9 @@ export const App: React.FC = () => {
   const [brutto, setBrutto] = React.useState<Dinero.Dinero>(
     Dinero({ amount: 5000, currency: 'EUR', precision: 2 }),
   );
+  const [addBrutto, setAddBrutto] = React.useState<Dinero.Dinero | undefined>(
+    undefined,
+  );
 
   return (
     <Box
@@ -25,6 +28,26 @@ export const App: React.FC = () => {
         digitGroupSeparator="."
         onChange={(value) => {
           setBrutto(value);
+        }}
+      />
+      <CurrencyTextField
+        label={'Zusätzliches Einkommen'}
+        name={'add-einkommen'}
+        value={addBrutto}
+        variant={'outlined'}
+        currencySymbol="€"
+        currency="EUR"
+        precision={2}
+        minimumValue={0}
+        InputLabelProps={{
+          shrink: true,
+        }}
+        defaultValue={Dinero({ amount: 0, currency: 'EUR', precision: 2 })}
+        decimalCharacter=","
+        digitGroupSeparator="."
+        placeholder="0.00"
+        onChange={(value) => {
+          setAddBrutto(value);
         }}
       />
       <Button
@@ -47,7 +70,9 @@ export const App: React.FC = () => {
       >
         Auf 50 € setzen
       </Button>
-      <Typography>Dinero amount: {brutto.getAmount()}</Typography>
+      <Typography>
+        Dinero amount: {brutto.getAmount() + (addBrutto?.getAmount() || 0)}
+      </Typography>
     </Box>
   );
 };
